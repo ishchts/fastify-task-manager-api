@@ -1,5 +1,3 @@
-export default async function (fastify, opts) {
-  fastify.get('/', async function (request, reply) {
-    return { root: true }
-  })
+export default async function root(fastify) {
+  fastify.get('/', async (request, reply) => ({ root: true }));
 }

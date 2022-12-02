@@ -1,15 +1,15 @@
-import path from 'path'
-import AutoLoad from '@fastify/autoload'
-import { fileURLToPath } from 'url'
+import path from 'path';
+import AutoLoad from '@fastify/autoload';
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-console.log('__filename __filename', __filename);
-console.log('__dirname __dirname', __dirname);
+// eslint-disable-next-line
+const __filename = fileURLToPath(import.meta.url);
+// eslint-disable-next-line
+const __dirname = path.dirname(__filename);
 // Pass --options via CLI arguments in command to enable these options.
-export const options = {}
+export const options = {};
 
-export default async function (fastify, opts) {
+export default async function app(fastify, opts) {
   // Place here your custom code!
 
   // Do not touch the following lines
@@ -19,13 +19,13 @@ export default async function (fastify, opts) {
   // through your application
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'plugins'),
-    options: Object.assign({}, opts)
-  })
+    options: { ...opts },
+  });
 
   // This loads all plugins defined in routes
   // define your routes in one of these
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'routes'),
-    options: Object.assign({}, opts)
-  })
+    options: { ...opts },
+  });
 }
