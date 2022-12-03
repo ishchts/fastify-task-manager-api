@@ -16,11 +16,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "4.0.0",
-    "fastify-plugin": "4.0.0",
     "@fastify/autoload": "5.0.0",
     "@fastify/sensible": "5.0.0",
-    "fastify-cli": "5.6.0"
+    "fastify": "4.0.0",
+    "fastify-cli": "5.6.0",
+    "fastify-objectionjs": "2.0.0",
+    "fastify-plugin": "4.0.0",
+    "knex": "2.3.0",
+    "objection": "3.0.1",
+    "sqlite3": "5.1.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.2.0",
