@@ -1,7 +1,12 @@
 import path from 'path';
 import AutoLoad from '@fastify/autoload';
 import { fileURLToPath } from 'url';
+import fastifyObjectionjs from 'fastify-objectionjs';
 
+import * as knexConfig from '../knexfile.js';
+import models from './models/index.js';
+
+const mode = 'development';
 // eslint-disable-next-line
 const __filename = fileURLToPath(import.meta.url);
 // eslint-disable-next-line
@@ -10,6 +15,10 @@ const __dirname = path.dirname(__filename);
 export const options = {};
 
 export default async function app(fastify, opts) {
+  fastify.register(fastifyObjectionjs, {
+    knexConfig: knexConfig[mode],
+    models,
+  });
   // Place here your custom code!
 
   // Do not touch the following lines

@@ -1,6 +1,8 @@
 export default async function example(fastify, opts) {
   fastify.get('/', async (request, reply) => {
-    reply.send({ users: 'get users' });
+    const users = await fastify.objection.models.user.query();
+
+    reply.send({ users });
   });
   fastify.post('/', async (request, reply) => {
     reply.send({ users: 'create users' });
