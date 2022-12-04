@@ -2,6 +2,8 @@ import path from 'path';
 import AutoLoad from '@fastify/autoload';
 import { fileURLToPath } from 'url';
 import fastifyObjectionjs from 'fastify-objectionjs';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
@@ -18,6 +20,24 @@ export default async function app(fastify, opts) {
   fastify.register(fastifyObjectionjs, {
     knexConfig: knexConfig[mode],
     models,
+  });
+
+  fastify.register(fastifySwagger);
+
+  fastify.register(fastifySwaggerUi, {
+    routePrefix: '/swagger',
+    uiConfig: {
+      docExpansion: 'full',
+      deepLinking: false,
+    },
+    uiHooks: {
+      onRequest(request, reply, next) { next(); },
+      preHandler(request, reply, next) { next(); },
+    },
+    staticCSP: true,
+    transformStaticCSP: (header) => header,
+    transformSpecification: (swaggerObject, request, reply) => swaggerObject,
+    transformSpecificationClone: true,
   });
   // Place here your custom code!
 
