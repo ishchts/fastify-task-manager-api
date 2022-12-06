@@ -5,10 +5,10 @@ export const seed = async (knex) => {
   await knex('users').del();
   await knex('users').insert([
     {
-      first_name: 'Ekaterina', last_name: 'Tarasova', email: 'tarasova@mail.ru', password: secure('Qwerty11'),
+      first_name: 'Ekaterina', last_name: 'Tarasova', email: 'tarasova@mail.ru', password_digested: secure('Qwerty11'),
     },
     {
-      first_name: 'Nikita', last_name: 'Strogov', email: 'strogov@mail.ru', password: secure('Qwerty1234'),
+      first_name: 'Nikita', last_name: 'Strogov', email: 'strogov@mail.ru', password_digested: secure('Qwerty1234'),
     },
   ]);
 };

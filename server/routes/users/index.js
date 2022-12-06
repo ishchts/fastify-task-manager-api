@@ -1,58 +1,147 @@
 export default async (fastify, opts) => {
+  const {
+    objection: {
+      models: {
+        user,
+      },
+    },
+  } = fastify;
   fastify.get('/', {
     schema: {
       tags: ['users'],
       description: 'Получение пользователей',
       response: {
         200: {
-          type: 'object',
-          properties: {
-            users: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  id: { type: 'number' },
-                  firstName: { type: 'string' },
-                  lastName: { type: 'string' },
-                  email: { type: 'string' },
-                  createdAt: { type: 'string' },
-                },
-              },
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              firstName: { type: 'string' },
+              lastName: { type: 'string' },
+              email: { type: 'string' },
+              createdAt: { type: 'string' },
             },
           },
         },
       },
     },
   }, async (request, reply) => {
-    const users = await fastify.objection.models.user.query();
+    const users = await user.query();
 
-    reply.code(200).send({ users });
+    reply.code(200).send(users);
   });
 
   fastify.post('/', {
     schema: {
       tags: ['users'],
       description: 'Создание пользователя',
-      body: {},
+      body: {
+        type: 'object',
+        properties: {
+          firstName: {
+            type: 'string',
+            minLength: 2,
+          },
+          lastName: {
+            type: 'string',
+            minLength: 2,
+          },
+          email: {
+            type: 'string',
+            format: 'email',
+          },
+          password: {
+            type: 'string',
+            minLength: 3,
+          },
+        },
+        required: ['firstName', 'lastName', 'email', 'password'],
+        additionalProperties: false,
+      },
+      response: {
+        201: {
+          type: 'object',
+          properties: {
+            firstName: {
+              type: 'string',
+            },
+            lastName: {
+              type: 'string',
+            },
+            email: {
+              type: 'string',
+            },
+          },
+        },
+      },
     },
   }, async (request, reply) => {
-    reply.code(201).send({ users: 'create users' });
+    try {
+      const newUser = await user.query().insert(request.body);
+      reply.code(201).send(newUser);
+    } catch (error) {
+      reply.code(201).send(error);
+    }
   });
 
   fastify.patch('/:id', {
     schema: {
       tags: ['users'],
+      description: 'Редактирование пользователя',
+      body: {
+        type: 'object',
+        properties: {
+          firstName: {
+            type: 'string',
+            minLength: 2,
+          },
+          lastName: {
+            type: 'string',
+            minLength: 2,
+          },
+          email: {
+            type: 'string',
+            format: 'email',
+          },
+        },
+        required: ['firstName', 'lastName', 'email'],
+        additionalProperties: false,
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            email: { type: 'string' },
+          },
+        },
+      },
     },
-  }, async (request, reply) => {
-    reply.send({ users: 'patch users' });
+  }, async (req, reply) => {
+    try {
+      const findedUser = await user.query().findById(Number(req.params.id));
+
+      await findedUser.$query().patch(req.body);
+
+      reply.code(200).send(findedUser);
+    } catch (error) {
+      reply.send(error);
+    }
   });
 
   fastify.delete('/:id', {
     schema: {
       tags: ['users'],
+      description: 'Удаление пользователя',
     },
-  }, async (request, reply) => {
-    reply.send({ users: 'delete users' });
+  }, async ({ params: { id } }, reply) => {
+    try {
+      await user.query().deleteById(id);
+      reply.code(200);
+    } catch (error) {
+      reply.code(400).send(error);
+    }
   });
 };

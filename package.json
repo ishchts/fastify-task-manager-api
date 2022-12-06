@@ -26,6 +26,7 @@
     "fastify-plugin": "4.0.0",
     "knex": "2.3.0",
     "objection": "3.0.1",
+    "objection-unique": "1.2.2",
     "sqlite3": "5.1.2"
   },
   "devDependencies": {
