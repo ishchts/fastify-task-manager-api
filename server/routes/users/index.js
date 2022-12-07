@@ -26,7 +26,7 @@ export default async (fastify, opts) => {
         },
       },
     },
-  }, async (request, reply) => {
+  }, async (req, reply) => {
     const users = await user.query();
 
     reply.code(200).send(users);
@@ -76,9 +76,9 @@ export default async (fastify, opts) => {
         },
       },
     },
-  }, async (request, reply) => {
+  }, async (req, reply) => {
     try {
-      const newUser = await user.query().insert(request.body);
+      const newUser = await user.query().insert(req.body);
       reply.code(201).send(newUser);
     } catch (error) {
       reply.code(201).send(error);
@@ -119,9 +119,14 @@ export default async (fastify, opts) => {
         },
       },
     },
+    onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
       const findedUser = await user.query().findById(Number(req.params.id));
+
+      if (req.user.payload.id !== findedUser.id) {
+        throw Error('Редактировать можно только свой профиль');
+      }
 
       await findedUser.$query().patch(req.body);
 
@@ -136,8 +141,15 @@ export default async (fastify, opts) => {
       tags: ['users'],
       description: 'Удаление пользователя',
     },
-  }, async ({ params: { id } }, reply) => {
+    onRequest: [fastify.authenticate],
+  }, async (req, reply) => {
+    const { params: { id } } = req;
+    const findedUser = await user.query().findById(Number(id));
+
     try {
+      if (req.user.payload.id !== findedUser.id) {
+        throw Error('Редактировать можно только свой профиль');
+      }
       await user.query().deleteById(id);
       reply.code(200);
     } catch (error) {

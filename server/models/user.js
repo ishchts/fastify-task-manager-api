@@ -14,4 +14,8 @@ export default class User extends unique(Model) {
   set password(value) {
     this.passwordDigested = sesure(value);
   }
+
+  verifyPassword(value) {
+    return this.passwordDigested === sesure(value);
+  }
 }

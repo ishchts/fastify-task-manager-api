@@ -1,12 +1,15 @@
 import path from 'path';
-import AutoLoad from '@fastify/autoload';
 import { fileURLToPath } from 'url';
+import { config } from 'dotenv';
+import AutoLoad from '@fastify/autoload';
 import fastifyObjectionjs from 'fastify-objectionjs';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
+
+config();
 
 const mode = 'development';
 // eslint-disable-next-line
