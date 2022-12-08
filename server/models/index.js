@@ -1,3 +1,4 @@
 import User from './user.js';
+import Status from './status.js';
 
-export default [User];
+export default [User, Status];
