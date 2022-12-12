@@ -30,7 +30,7 @@ export default async function app(fastify, opts) {
   fastify.register(fastifySwaggerUi, {
     routePrefix: '/swagger',
     uiConfig: {
-      docExpansion: 'full',
+      docExpansion: 'list',
       deepLinking: false,
     },
     uiHooks: {
