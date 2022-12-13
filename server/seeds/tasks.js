@@ -4,9 +4,9 @@ export const seed = async (knex) => {
     {
       name: 'task seed',
       description: 'description seed',
-      status_id: 32,
-      creator_id: 22,
-      executor_id: 23,
+      status_id: 36,
+      creator_id: 24,
+      executor_id: 25,
     },
   ]);
 };
