@@ -3,6 +3,7 @@ export default async (fastify) => {
     objection: {
       models: {
         task,
+        label,
       },
     },
   } = fastify;
@@ -61,14 +62,27 @@ export default async (fastify) => {
                   },
                 },
               },
+              labels: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: {
+                      id: 'number',
+                      name: 'string',
+                    },
+                  },
+                },
+              },
             },
           },
         },
       },
     },
+    onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
-      const tasks = await task.query().withGraphFetched('[creator, status, executor]');
+      const tasks = await task.query().withGraphFetched('[creator, status, executor, labels]');
       reply.code(200).send(tasks);
     } catch (error) {
       reply.send(error);
@@ -98,13 +112,28 @@ export default async (fastify) => {
             executorId: {
               type: ['number', 'null'],
             },
+            labels: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'number',
+                  },
+                  name: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
           },
         },
       },
     },
+    onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
-      const findedTask = await task.query().findById(req.params.id);
+      const findedTask = await task.query().withGraphFetched('labels').findById(req.params.id);
       reply.code(200).send(findedTask);
     } catch (error) {
       reply.send(error);
@@ -135,16 +164,29 @@ export default async (fastify) => {
           executorId: {
             type: 'number',
           },
+          labelIds: {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+          },
         },
         additionalProperties: false,
       },
     },
+    onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
+      const labels = await label.query().findByIds(req.body.labelIds ?? []);
+      delete req.body.labelIds;
       await task.transaction(async (trx) => {
-        await task.query(trx).insert(req.body);
+        await task.query(trx).insertGraph({
+          ...req.body,
+          labels,
+        }, { relate: true });
         reply.code(201);
       });
+      reply.code(201);
     } catch (error) {
       reply.send(error);
     }
@@ -174,6 +216,12 @@ export default async (fastify) => {
           executorId: {
             type: 'number',
           },
+          labelIds: {
+            type: 'array',
+            items: {
+              type: 'number',
+            },
+          },
         },
         additionalProperties: false,
       },
@@ -201,15 +249,25 @@ export default async (fastify) => {
         },
       },
     },
+    onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
+      const labels = await label.query().findByIds(req.body.labelIds ?? []);
+      delete req.body.labelIds;
       await task.transaction(async (trx) => {
         const res = await task.query(trx).upsertGraph({
           id: req.params.id,
           ...req.body,
           description: req.body.description ?? '',
           executorId: req.body.executorId ?? null,
-        }, { noDelete: true, relate: true });
+          labels,
+        }, {
+          relate: true,
+          noDelete: ['creator', 'status', 'executor'],
+          unrelate: ['labels'],
+          noUpdate: ['labels'],
+        });
+
         reply.code(200).send(res);
       });
     } catch (error) {
@@ -222,6 +280,7 @@ export default async (fastify) => {
       tags: ['tasks'],
       description: 'Удаление задачи',
     },
+    onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
       await task.query().deleteById(req.params.id);
