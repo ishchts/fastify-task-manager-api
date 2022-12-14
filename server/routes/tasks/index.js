@@ -12,6 +12,23 @@ export default async (fastify) => {
     schema: {
       tags: ['tasks'],
       description: 'Список задач',
+      query: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'number',
+          },
+          executor: {
+            type: 'number',
+          },
+          label: {
+            type: 'number',
+          },
+          isCreator: {
+            type: 'boolean',
+          },
+        },
+      },
       response: {
         200: {
           type: 'array',
@@ -67,9 +84,11 @@ export default async (fastify) => {
                 items: {
                   type: 'object',
                   properties: {
+                    id: {
+                      type: 'number',
+                    },
                     name: {
-                      id: 'number',
-                      name: 'string',
+                      id: 'string',
                     },
                   },
                 },
@@ -82,8 +101,29 @@ export default async (fastify) => {
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
-      const tasks = await task.query().withGraphFetched('[creator, status, executor, labels]');
-      reply.code(200).send(tasks);
+      const result = await task.transaction(async (trx) => {
+        const tasks = task.query(trx)
+          .withGraphJoined('[creator, status, executor, labels]');
+
+        if (req.query.status) {
+          tasks.modify('filterBy', 'statusId', req.query.status);
+        }
+        if (req.query.executor) {
+          tasks.modify('filterBy', 'executorId', req.query.executor);
+        }
+
+        if (req.query.isCreator) {
+          tasks.modify('filterBy', 'creatorId', req.user.payload.id);
+        }
+
+        if (req.query.label) {
+          tasks.modify('filterBy', 'labels.id', req.query.label);
+        }
+
+        return tasks;
+      });
+
+      reply.code(200).send(result);
     } catch (error) {
       reply.send(error);
     }
@@ -133,7 +173,7 @@ export default async (fastify) => {
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
-      const findedTask = await task.query().withGraphFetched('labels').findById(req.params.id);
+      const findedTask = await task.query().withGraphJoined('labels').findById(req.params.id);
       reply.code(200).send(findedTask);
     } catch (error) {
       reply.send(error);

@@ -10,6 +10,12 @@ export const seed = async (knex) => {
     {
       first_name: 'Nikita', last_name: 'Strogov', email: 'strogov@mail.ru', password_digested: secure('Qwerty1234'),
     },
+    {
+      first_name: 'Anna', last_name: 'Gordienko', email: 'gordienko@mail.ru', password_digested: secure('Qwerty1234'),
+    },
+    {
+      first_name: 'Victor', last_name: 'Nikolaev', email: 'nikolaev@mail.ru', password_digested: secure('Qwerty1234'),
+    },
   ]);
 };
 

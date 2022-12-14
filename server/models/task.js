@@ -49,4 +49,11 @@ export default class Task extends Model {
       },
     };
   }
+
+  static modifiers = {
+    filterBy(query, name, value) {
+      const { ref } = Task;
+      query.where(ref(name), value);
+    },
+  };
 }

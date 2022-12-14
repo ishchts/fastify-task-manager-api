@@ -57,7 +57,7 @@ export default async (fastify) => {
         email: findedUser.email,
       };
 
-      const accessToken = await reply.jwtSign({ payload }, { expiresIn: '30s' });
+      const accessToken = await reply.jwtSign({ payload }, { expiresIn: '300m' });
       const refreshToken = await reply.jwtSign({}, { expiresIn: '1d' });
 
       reply

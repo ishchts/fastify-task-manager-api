@@ -11,7 +11,7 @@ import models from './models/index.js';
 
 config();
 
-const mode = 'development';
+const mode = process.env.NODE_ENV;
 // eslint-disable-next-line
 const __filename = fileURLToPath(import.meta.url);
 // eslint-disable-next-line
