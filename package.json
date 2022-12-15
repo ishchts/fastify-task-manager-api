@@ -7,8 +7,12 @@
   "directories": {
     "test": "test"
   },
+  "engines": {
+    "node": ">=16.x"
+  },
   "scripts": {
     "test": "tap \"server/test/**/*.test.js\"",
+    "migrate": "npx knex migrate:up",
     "start": "fastify start -l info server/app.js",
     "dev": "fastify start -w -l info -P server/app.js"
   },
@@ -30,6 +34,7 @@
     "knex": "2.3.0",
     "objection": "3.0.1",
     "objection-unique": "1.2.2",
+    "pg": "8.8.0",
     "sqlite3": "5.1.2"
   },
   "devDependencies": {
