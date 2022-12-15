@@ -1,5 +1,5 @@
 export const up = (knex) => knex.schema.createTable('statuses', (table) => {
-  table.increments('id');
+  table.increments('id').primary();
   table.string('name').notNullable();
   table.timestamp('create_at').default(knex.fn.now());
   table.timestamp('updated_at').default(knex.fn.now());

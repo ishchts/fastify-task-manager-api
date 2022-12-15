@@ -1,5 +1,5 @@
 export const up = (knex) => knex.schema.createTable('tasks', (table) => {
-  table.increments('id');
+  table.increments('id').primary();
   table.string('name').notNullable();
   table.string('description');
   table.integer('status_id').references('id').inTable('statuses');
