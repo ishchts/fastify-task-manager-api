@@ -11,13 +11,15 @@
     "node": ">=16.x"
   },
   "scripts": {
+    "prepare": "husky install",
     "test": "tap \"server/test/**/*.test.js\"",
+    "lint": "npx eslint ./server",
     "migrate": "npx knex migrate:up",
-    "start": "fastify start -l info server/app.js",
-    "dev": "fastify start -w -l info -P server/app.js"
+    "dev": "fastify start -w -l info -P server/app.js",
+    "start": "fastify start -l info server/app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ilya Shchutskiy",
   "license": "ISC",
   "dependencies": {
     "@fastify/autoload": "5.0.0",
@@ -42,6 +44,7 @@
     "eslint": "^8.28.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "^2.26.0",
+    "husky": "^8.0.0",
     "tap": "16.1.0"
   },
   "tap": {
