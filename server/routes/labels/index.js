@@ -38,6 +38,15 @@ export default async (fastify) => {
     schema: {
       tags: ['labels'],
       description: 'Полученние метки',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
     },
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {
@@ -91,6 +100,15 @@ export default async (fastify) => {
     schema: {
       tags: ['labels'],
       description: 'Редактирование метки',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
       body: {
         type: 'object',
         required: ['name'],
@@ -133,6 +151,15 @@ export default async (fastify) => {
     schema: {
       tags: ['labels'],
       description: 'Удаление метки',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
     },
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {

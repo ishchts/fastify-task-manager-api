@@ -74,6 +74,15 @@ export default async (fastify) => {
     schema: {
       tags: ['statuses'],
       description: 'Редактирование статуса',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
       body: {
         type: 'object',
         properties: {
@@ -114,6 +123,15 @@ export default async (fastify) => {
     schema: {
       tags: ['statuses'],
       description: 'Удаление статуса',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
     },
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {

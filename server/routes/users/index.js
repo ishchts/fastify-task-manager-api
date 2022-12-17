@@ -89,6 +89,15 @@ export default async (fastify, opts) => {
     schema: {
       tags: ['users'],
       description: 'Редактирование пользователя',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
       body: {
         type: 'object',
         properties: {
@@ -140,6 +149,15 @@ export default async (fastify, opts) => {
     schema: {
       tags: ['users'],
       description: 'Удаление пользователя',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
     },
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {

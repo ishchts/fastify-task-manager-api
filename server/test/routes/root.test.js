@@ -5,7 +5,7 @@ test('default root route', async (t) => {
   const app = await build(t);
 
   const res = await app.inject({
-    url: '/',
+    url: 'api/v1/',
   });
   t.same(JSON.parse(res.payload), { root: true });
 });

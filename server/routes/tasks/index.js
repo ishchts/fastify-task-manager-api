@@ -34,6 +34,7 @@ export default async (fastify) => {
           type: 'array',
           items: {
             type: 'object',
+            required: ['name', 'creatorId', 'statusId'],
             properties: {
               id: {
                 type: 'number',
@@ -133,6 +134,15 @@ export default async (fastify) => {
     schema: {
       tags: ['tasks'],
       description: 'Деталка задачи',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
       response: {
         200: {
           type: 'object',
@@ -213,6 +223,9 @@ export default async (fastify) => {
         },
         additionalProperties: false,
       },
+      response: {
+        201: {},
+      },
     },
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {
@@ -224,9 +237,8 @@ export default async (fastify) => {
           ...req.body,
           labels,
         }, { relate: true });
-        reply.code(201);
       });
-      reply.code(201);
+      reply.code(201).send({});
     } catch (error) {
       reply.send(error);
     }
@@ -236,6 +248,15 @@ export default async (fastify) => {
     schema: {
       tags: ['tasks'],
       description: 'Редактирование задачи',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
       body: {
         type: 'object',
         required: ['name', 'creatorId', 'statusId'],
@@ -319,6 +340,15 @@ export default async (fastify) => {
     schema: {
       tags: ['tasks'],
       description: 'Удаление задачи',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
     },
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {
