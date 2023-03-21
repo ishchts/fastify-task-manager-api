@@ -147,6 +147,9 @@ export default async (fastify) => {
         200: {
           type: 'object',
           properties: {
+            id: {
+              type: 'number',
+            },
             name: {
               type: 'string',
             },
@@ -176,6 +179,14 @@ export default async (fastify) => {
                 },
               },
             },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'datetime',
+            },
           },
         },
       },
@@ -196,7 +207,7 @@ export default async (fastify) => {
       description: 'Создание новой задачи',
       body: {
         type: 'object',
-        required: ['name', 'creatorId', 'statusId'],
+        required: ['name', 'statusId'],
         properties: {
           name: {
             type: 'string',
@@ -204,9 +215,6 @@ export default async (fastify) => {
           },
           description: {
             type: 'string',
-          },
-          creatorId: {
-            type: 'number',
           },
           statusId: {
             type: 'number',
@@ -235,6 +243,8 @@ export default async (fastify) => {
       await task.transaction(async (trx) => {
         await task.query(trx).insertGraph({
           ...req.body,
+          creatorId: req.user.payload.id,
+          executorId: req.body.executorId ?? null,
           labels,
         }, { relate: true });
       });
@@ -259,7 +269,7 @@ export default async (fastify) => {
       },
       body: {
         type: 'object',
-        required: ['name', 'creatorId', 'statusId'],
+        required: ['name', 'statusId'],
         properties: {
           name: {
             type: 'string',
@@ -267,9 +277,6 @@ export default async (fastify) => {
           },
           description: {
             type: 'string',
-          },
-          creatorId: {
-            type: 'number',
           },
           statusId: {
             type: 'number',
@@ -319,6 +326,7 @@ export default async (fastify) => {
         const res = await task.query(trx).upsertGraph({
           id: req.params.id,
           ...req.body,
+          creatorId: req.user.payload.id,
           description: req.body.description ?? '',
           executorId: req.body.executorId ?? null,
           labels,

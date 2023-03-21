@@ -19,6 +19,7 @@ export default async (fastify) => {
             properties: {
               id: { type: 'number' },
               name: { type: 'string' },
+              createAt: { type: 'string' },
             },
           },
         },
@@ -108,11 +109,15 @@ export default async (fastify) => {
     onRequest: [fastify.authenticate],
   }, async (req, reply) => {
     try {
-      const findedStatus = await status.query().findById(Number(req.params.id));
+      const findedStatus = await status
+        .query()
+        .findById(Number(req.params.id));
+
       if (!findedStatus) {
         throw Error('Статус не найден');
       }
-      findedStatus.$query().patch(req.body.name);
+      await findedStatus.$query().patch({ name: req.body.name });
+
       reply.code(200).send(findedStatus);
     } catch (error) {
       throw Error(error);

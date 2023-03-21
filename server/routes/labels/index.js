@@ -19,6 +19,7 @@ export default async (fastify) => {
             properties: {
               id: { type: 'number' },
               name: { type: 'string' },
+              createAt: { type: 'string' },
             },
           },
         },

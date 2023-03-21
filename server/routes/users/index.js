@@ -166,7 +166,7 @@ export default async (fastify, opts) => {
 
     try {
       if (req.user.payload.id !== findedUser.id) {
-        throw Error('Редактировать можно только свой профиль');
+        throw Error('Удалить можно только свой профиль');
       }
       await user.query().deleteById(id);
       reply.code(200);
